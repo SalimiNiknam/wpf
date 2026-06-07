@@ -1,0 +1,113 @@
+using System.Text;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+using System.Data.SqlClient;
+using System.Data;
+
+namespace WpfApp2
+{
+    /// <summary>
+    /// Interaction logic for MainWindow.xaml
+    /// </summary>
+    public partial class MainWindow : Window
+    {
+        public MainWindow()
+        {
+            InitializeComponent();
+        }
+
+        private void btnSave_Click(object sender, RoutedEventArgs e)
+        {
+            // 1. رشته اتصال
+            string connectionString = "Data Source=.;Initial Catalog=Sina-Salimi-niknam;Integrated Security=True;Encrypt=False";
+
+            // 2. گرفتن مقادیر از تکست‌باکس‌ها
+            string sidText = txtDistNumber.Text.Trim();
+            string sname = txtDistName.Text.Trim();
+            string statusText = txtLocation.Text.Trim();
+            string city = txtCity.Text.Trim();
+
+            // 3. چک کردن خالی نبودن فیلدها
+            if (string.IsNullOrEmpty(sidText) || string.IsNullOrEmpty(sname) || string.IsNullOrEmpty(statusText) || string.IsNullOrEmpty(city))
+            {
+                txtSaveResult.Text = "لطفاً تمام فیلدها را پر کنید.";
+                txtSaveResult.Foreground = System.Windows.Media.Brushes.Red;
+                return;
+            }
+
+            // 4. تبدیل اعداد (چون SID و Status در دیتابیس int هستند)
+            if (!int.TryParse(sidText, out int sid) || !int.TryParse(statusText, out int status))
+            {
+                txtSaveResult.Text = "خطا: شماره توزیع‌کننده و موقعیت (Status) باید عدد باشند!";
+                txtSaveResult.Foreground = System.Windows.Media.Brushes.Red;
+                return;
+            }
+
+            // 5. دستور INSERT برای جدول Supplier
+            string query = "INSERT INTO Supplier (SID, SName, Status, City) VALUES (@SID, @SName, @Status, @City)";
+
+            // 6. اتصال و ثبت در دیتابیس
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    {
+                        // مقداردهی پارامترها (این بخش ارور شما رو حل می‌کنه)
+                        cmd.Parameters.AddWithValue("@SID", sid);
+                        cmd.Parameters.AddWithValue("@SName", sname);
+                        cmd.Parameters.AddWithValue("@Status", status);
+                        cmd.Parameters.AddWithValue("@City", city);
+
+                        // اجرای دستور ثبت
+                        int result = cmd.ExecuteNonQuery();
+
+                        if (result > 0)
+                        {
+                            txtSaveResult.Text = "اطلاعات توزیع‌کننده با موفقیت ثبت شد!";
+                            txtSaveResult.Foreground = System.Windows.Media.Brushes.Green;
+
+                            // خالی کردن تکست‌باکس‌ها بعد از ثبت موفق
+                            txtDistNumber.Text = "";
+                            txtDistName.Text = "";
+                            txtLocation.Text = "";
+                            txtCity.Text = "";
+                        }
+                        else
+                        {
+                            txtSaveResult.Text = "خطا در ثبت اطلاعات.";
+                            txtSaveResult.Foreground = System.Windows.Media.Brushes.Red;
+                        }
+                    }
+                }
+                catch (SqlException ex)
+                {
+                    // اگر شماره تکراری وارد بشه
+                    if (ex.Number == 2627)
+                    {
+                        txtSaveResult.Text = "خطا: این شماره توزیع‌کننده (SID) قبلاً در سیستم ثبت شده است!";
+                        txtSaveResult.Foreground = System.Windows.Media.Brushes.Red;
+                    }
+                    else
+                    {
+                        txtSaveResult.Text = "خطای دیتابیس: " + ex.Message;
+                        txtSaveResult.Foreground = System.Windows.Media.Brushes.Red;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    txtSaveResult.Text = "خطای سیستمی: " + ex.Message;
+                    txtSaveResult.Foreground = System.Windows.Media.Brushes.Red;
+                }
+            }
+        }
+    }
+        }
