@@ -1,0 +1,42 @@
+<Window x:Class="WpfApp2.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfApp2"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid Margin="0,0,32,0">
+        <!-- جدول جداکننده برای زیبایی -->
+        <Separator Margin="34,20,0,20"/>
+
+        <!-- بخش ثبت توزیع‌کننده -->
+        <StackPanel FlowDirection="RightToLeft" Margin="34,0,0,5">
+            <TextBlock Text="ثبت توزیع‌کننده جدید" FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/>
+
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                <TextBlock Text="شماره توزیع‌کننده: " Width="130" VerticalAlignment="Center"/>
+                <TextBox x:Name="txtDistNumber" Width="200" Height="25"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                <TextBlock Text="نام توزیع‌کننده: " Width="130" VerticalAlignment="Center"/>
+                <TextBox x:Name="txtDistName" Width="200" Height="25"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                <TextBlock Text="موقعیت: " Width="130" VerticalAlignment="Center"/>
+                <TextBox x:Name="txtLocation" Width="200" Height="25"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                <TextBlock Text="شهر: " Width="130" VerticalAlignment="Center"/>
+                <TextBox x:Name="txtCity" Width="200" Height="25"/>
+            </StackPanel>
+
+            <Button x:Name="btnSave" Content="ثبت در دیتابیس" Width="120" Height="30" HorizontalAlignment="Left" Margin="130,10,0,0" Click="btnSave_Click"/>
+
+            <TextBlock x:Name="txtSaveResult" FontSize="13" Margin="0,10,0,0" Foreground="Green"/>
+        </StackPanel>
+    </Grid>
+</Window>
